@@ -25,8 +25,8 @@ CREATE TABLE tickets (
   performance_id    INTEGER NOT NULL,
   username          TEXT NOT NULL,
   PRIMARY KEY       (ticket_id),
-  FOREIGN KEY       (performance_id) REFERENCES performances(performance_id),
-  FOREIGN KEY       (username) REFERENCES customers(username)
+  FOREIGN KEY       (performance_id) REFERENCES performances(performance_id) ON DELETE CASCADE,
+  FOREIGN KEY       (username) REFERENCES customers(username) ON DELETE CASCADE
 );
 
 DROP TABLE IF EXISTS performances;
@@ -36,8 +36,8 @@ CREATE TABLE performances (
   performance_date              DATE NOT NULL,
   theater_name                  TEXT NOT NULL,
   imdb_key                      TEXT NOT NULL,
-  FOREIGN KEY                   (theater_name) REFERENCES theaters(theater_name),
-  FOREIGN KEY                   (imdb_key) REFERENCES movies(imdb_key)
+  FOREIGN KEY                   (theater_name) REFERENCES theaters(theater_name) ON DELETE CASCADE,
+  FOREIGN KEY                   (imdb_key) REFERENCES movies(imdb_key) ON DELETE CASCADE
 );
 
 DROP TABLE IF EXISTS theaters;
@@ -113,4 +113,4 @@ END TRANSACTION;
 PRAGMA foreign_key = on;
 
 --Powershell promt, enter in terminal:
---Get-Content lab2.sql | & sqlite3 movies.sqlite
+--Get-Content lab3.sql | & sqlite3 movies.sqlite

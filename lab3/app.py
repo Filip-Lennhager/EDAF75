@@ -1,38 +1,31 @@
-from bottle import get, post, run, request, response
+from bottle import get, post, run, request, response, delete
 import sqlite3
 
 
-db = sqlite3.connect("movies.sqlite")
+db = sqlite3.connect("lab3/movies.sqlite")
+PORT=7007
 
 @get('/ping')
 def get_ping():
     response.status = 200
     return '<b>PONG</b>!'
 
-PORT=7007
+
 
 @post('/reset')
 def post_reset():
-    theaters = request.json
     c = db.cursor()
     c.execute(
         """
         INSERT
-        INTO       students(s_name, gpa, size_hs)
-        VALUES     (?, ?, ?)
-        RETURNING  s_id
-        """,
-        [theaters['name'], theaters['capacity']]
+        INTO        theaters(theater_name, capacity)
+        VALUES      ("Kino",10);
+                    ("Regal",16);
+                    ("Skandia",100)
+        """
     )
-    found = c.fetchone()
-    if not found:
-        response.status = 400
-        return "Illegal..."
-    else:
-        db.commit()
-        response.status = 201
-        s_id, = found
-        return f"http://localhost:{PORT}/{s_id}"
+    db.commit()
+    response.status = 200
 
 @get('/movies')
 def get_movies():
@@ -48,4 +41,18 @@ def get_movies():
     response.status = 200
     return {"data": found}
 
-run(host='localhost', port=7007)
+@get('/theaters')
+def get_theaters():
+    c = db.cursor()
+    c.execute(
+        """
+        SELECT   theater_name, capacity
+        FROM     theaters
+        """
+    )
+    found = [{"name": theater_name,"capacity": capacity}
+             for theater_name,capacity in c]
+    response.status = 200
+    return {"data": found}
+
+run(host = 'localhost', port = PORT)
