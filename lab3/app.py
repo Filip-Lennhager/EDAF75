@@ -9,7 +9,7 @@ PORT=7007
 @get('/ping')
 def get_ping():
     response.status = 200
-    return '<b>PONG</b>!'
+    return 'pong'
 
 @post('/reset')
 def post_reset():
@@ -55,7 +55,7 @@ def post_users():
         db.commit()
         response.status = 201
         username, = found
-        return f"http://localhost:{PORT}/users/{username}"
+        return f"/users/{username}"
 
 @post('/movies')
 def post_movies():
@@ -82,7 +82,7 @@ def post_movies():
         db.commit()
         response.status = 201
         key, = found
-        return f"http://localhost:{PORT}/users/{key}"
+        return f"/movies/{key}"
 
 @post('/performances')
 def post_performances():
@@ -109,7 +109,7 @@ def post_performances():
         db.commit()
         response.status = 201
         id, = found
-        return f"http://localhost:{PORT}/performances/{id}"
+        return f"/performances/{id}"
 
 @post('/tickets')
 def post_tickets():
@@ -131,7 +131,7 @@ def post_tickets():
         WHERE   performance_id = ?
         """,
         [ticket['performanceId']]
-            )
+        )
     remaining_seats, = c.fetchone()
     print(remaining_seats)
     if remaining_seats < 1:
@@ -171,7 +171,7 @@ def post_tickets():
         db.commit()
         response.status = 201
         id, = found
-        return f"http://localhost:{PORT}/tickets/{id}"
+        return f"/tickets/{id}"
     
     
     
@@ -232,7 +232,7 @@ def get_performances():
         USING   (performance_id)
         """
             )
-    found = [{"performanceId": performance_id,"date": performance_date, "startTime": start_time, "title": movie_name, "year": production_year, "theater": theater_name, "remainingSeats": remaining_seats}
+    found = [{"performanceId": performance_id, "date": performance_date, "startTime": start_time, "title": movie_name, "year": production_year, "theater": theater_name, "remainingSeats": remaining_seats}
              for performance_id, performance_date, start_time, movie_name, production_year, theater_name, remaining_seats in c]
     response.status = 200
     return {"data": found}

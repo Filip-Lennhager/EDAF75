@@ -22,7 +22,7 @@ CREATE TABLE customers (
 DROP TABLE IF EXISTS tickets;
 CREATE TABLE tickets (
   ticket_id         TEXT DEFAULT (lower(hex(randomblob(16)))),
-  performance_id    INTEGER NOT NULL,
+  performance_id    TEXT NOT NULL,
   username          TEXT NOT NULL,
   PRIMARY KEY       (ticket_id),
   FOREIGN KEY       (performance_id) REFERENCES performances(performance_id) ON DELETE CASCADE,
@@ -31,11 +31,12 @@ CREATE TABLE tickets (
 
 DROP TABLE IF EXISTS performances;
 CREATE TABLE performances (
-  performance_id                INTEGER PRIMARY KEY AUTOINCREMENT,
+  performance_id                TEXT DEFAULT (lower(hex(randomblob(16)))),
   start_time                    TIME NOT NULL,
   performance_date              DATE NOT NULL,
   theater_name                  TEXT NOT NULL,
   imdb_key                      TEXT NOT NULL,
+  PRIMARY KEY                   (performance_id),
   FOREIGN KEY                   (theater_name) REFERENCES theaters(theater_name) ON DELETE CASCADE,
   FOREIGN KEY                   (imdb_key) REFERENCES movies(imdb_key) ON DELETE CASCADE
 );
