@@ -43,7 +43,7 @@ CREATE TABLE performances (
 DROP TABLE IF EXISTS theaters;
 CREATE TABLE theaters (
   theater_name    TEXT NOT NULL,
-  capacity        INTEGER NOT NULL,
+  capacity        INT NOT NULL,
   PRIMARY KEY     (theater_name)
 );
 
@@ -51,7 +51,7 @@ DROP TABLE IF EXISTS movies;
 CREATE TABLE movies (
   movie_name        TEXT NOT NULL,
   imdb_key          TEXT NOT NULL,
-  running_time      INT NOT NULL,
+  running_time      INT,
   production_year   INT NOT NULL,
   PRIMARY KEY       (imdb_key)
 );
