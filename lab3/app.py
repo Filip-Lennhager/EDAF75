@@ -1,4 +1,4 @@
-from bottle import get, post, run, request, response, delete
+from bottle import get, post, run, request, response, delete, urlunquote
 import sqlite3
 
 
@@ -114,43 +114,43 @@ def post_performances():
 @post('/tickets')
 def post_tickets():
     ticket = request.json
-    c = db.cursor() 
-    c.execute(
-        """
-        WITH sales(performance_id, sold_tickets) AS (
-            SELECT performance_id, count()
-            FROM tickets
-            GROUP BY performance_id
+    c = db.cursor()
+    try: 
+        c.execute(
+            """
+            WITH sales(performance_id, sold_tickets) AS (
+                SELECT performance_id, count()
+                FROM tickets
+                GROUP BY performance_id
+            )
+            SELECT  capacity - coalesce(sold_tickets, 0)
+            FROM    performances
+            JOIN    theaters
+            USING   (theater_name)
+            LEFT OUTER JOIN sales
+            USING   (performance_id)
+            WHERE   performance_id = ?
+            """,
+            [ticket['performanceId']]
+            )
+        remaining_seats, = c.fetchone()
+        print(remaining_seats)
+        if remaining_seats < 1:
+            response.status = 400
+            return 'No tickets left'
+    
+        c.execute(
+            """
+            SELECT   1
+            FROM     customers
+            WHERE    username = ? AND password = ?
+            """,
+            [ticket['username'], hash(ticket[('pwd')])]
         )
-        SELECT  capacity - coalesce(sold_tickets, 0)
-        FROM    performances
-        JOIN    theaters
-        USING   (theater_name)
-        LEFT OUTER JOIN sales
-        USING   (performance_id)
-        WHERE   performance_id = ?
-        """,
-        [ticket['performanceId']]
-        )
-    remaining_seats, = c.fetchone()
-    print(remaining_seats)
-    if remaining_seats < 1:
-        response.status = 400
-        return 'No tickets left'
-
-    c.execute(
-        """
-        SELECT   1
-        FROM     customers
-        WHERE    username = ? AND password = ?
-        """,
-        [ticket['username'], hash(ticket[('pwd')])]
-    )
-    match = c.fetchone()
-    if match != (1,):
-        response.status = 401
-        return "Wrong user credentials"
-    try:
+        match, = c.fetchone()
+        if match != 1:
+            response.status = 401
+            return "Wrong user credentials"
         c.execute(
             """
             INSERT
@@ -173,8 +173,6 @@ def post_tickets():
         id, = found
         return f"/tickets/{id}"
     
-    
-    
 @get('/movies')
 def get_movies():
     query = """
@@ -185,14 +183,14 @@ def get_movies():
     params = []
     if request.query.title:
         query += " AND movie_name = ?"
-        params.append(unquote(request.query.title))
+        params.append(urlunquote(request.query.title))
     if request.query.year:
         query += " AND production_year = ?"
         params.append(request.query.year)
     c = db.cursor()
     c.execute(query, params)
     found = [{"imdbKey": imdb_key,"title": movie_name, "year": production_year}
-             for imdb_key,movie_name, production_year in c]
+             for imdb_key, movie_name, production_year in c]
     response.status = 200
     return {"data": found}
 
@@ -208,7 +206,7 @@ def get_student(imdb_key):
         [imdb_key]
     )
     found = [{"imdbKey": imdb_key,"title": movie_name, "year": production_year}
-             for imdb_key,movie_name, production_year in c]
+             for imdb_key, movie_name, production_year in c]
     response.status = 200
     return {"data": found}
 
@@ -242,7 +240,6 @@ def get_student_applications(username):
     c = db.cursor()
     c.execute(
         """
-        
         SELECT  performance_date, start_time, theater_name, movie_name, production_year, count() AS nbr_of_tickets
         FROM    tickets
         JOIN    performances
@@ -256,7 +253,7 @@ def get_student_applications(username):
         """,
         [username]
     )
-    found = [{"date": performance_date, "startTime": start_time, "theater": theater_name, "title": movie_name, "year": production_year, "numberOfTickets": nbr_of_tickets}
+    found = [{"date": performance_date, "startTime": start_time, "theater": theater_name, "title": movie_name, "year": production_year, "nbrOfTickets": nbr_of_tickets}
              for performance_date, start_time, theater_name, movie_name, production_year, nbr_of_tickets in c]
     response.status = 200
     return {"data": found}

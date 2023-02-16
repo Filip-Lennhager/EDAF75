@@ -1,4 +1,4 @@
-#Download REST CLient extension to run curl requests in VSCode editor.
+#Download REST Client extension to run curl requests in VSCode editor.
 curl -X GET http://localhost:7007/ping
 ###
 curl -X POST http://localhost:7007/reset
@@ -11,12 +11,52 @@ curl -X POST http://localhost:7007/users
                 "pwd": "aliceswaytoosimplepassword"
         }'
 ###
+curl -X POST http://localhost:7007/users
+   -H 'Content-Type: application/json'
+   -d '{
+                "username": "filip",
+                "fullName": "Filip Lennhager",
+                "pwd": "abc123"
+        }'
+###
 curl -X POST http://localhost:7007/movies
    -H 'Content-Type: application/json'
    -d '{
                 "imdbKey": "tt4975722",
                 "title": "Moonlight",
                 "year": 2016
+        }'
+###
+curl -X POST http://localhost:7007/movies
+   -H 'Content-Type: application/json'
+   -d '{
+                "imdbKey": "tt0078748",
+                "title": "Alien",
+                "year": 1979
+        }'
+###
+curl -X POST http://localhost:7007/movies
+   -H 'Content-Type: application/json'
+   -d '{
+                "imdbKey": "tt2316204",
+                "title": "Alien",
+                "year": 2017
+        }'
+###
+curl -X POST http://localhost:7007/movies
+   -H 'Content-Type: application/json'
+   -d '{
+                "imdbKey": "tt0110912",
+                "title": "Pulp Fiction",
+                "year": 1994
+        }'
+###
+curl -X POST http://localhost:7007/movies
+   -H 'Content-Type: application/json'
+   -d '{
+                "imdbKey": "tt0816692",
+                "title": "Interstellar",
+                "year": 2014
         }'
 ###
 curl -X POST http://localhost:7007/performances
@@ -34,20 +74,33 @@ curl -X POST http://localhost:7007/tickets
    -d '{
                 "username": "alice",
                 "pwd": "aliceswaytoosimplepassword",
-                "performanceId": "c64a4428851f20d81b9d14d16fd2c053"
+                "performanceId": "52b733c1d700e150d5a0756156e22c7b"
+        }'
+
+###
+curl -X POST http://localhost:7007/tickets
+   -H 'Content-Type: application/json'
+   -d '{
+                "username": "filip",
+                "pwd": "abc123",
+                "performanceId": "52b733c1d700e150d5a0756156e22c7b"
         }'
 ###
 curl -X GET http://localhost:7007/movies
 ###
-curl -X GET http://localhost:7007/movies\?title=Moonlight\&year=2016
+curl -X GET http://localhost:7007/movies?title=Alien&year=2017
 ###
-curl -X GET http://localhost:7007/movies\?title=Moonlight
+curl -X GET http://localhost:7007/movies?title=Alien
+###
+curl -X GET http://localhost:7007/movies?year=1979
 ###
 curl -X GET http://localhost:7007/movies/tt4975722
 ###
 curl -X GET http://localhost:7007/performances
 ###
 curl -X GET http://localhost:7007/users/alice/tickets
+###
+curl -X GET http://localhost:7007/users/filip/tickets
 ###
 
 

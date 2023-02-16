@@ -279,13 +279,13 @@ def create_performance_id_lookup():
 
 
 def main():
-    #check_ping()
+    check_ping()
     check_reset()
     check_post_user()
     check_post_movie()
     performances = check_post_performances()
     check_get_movies()
-    #check_get_movies_with_queries()
+    check_get_movies_with_queries()
     check_get_movies_with_ids()
     check_get_performances(performances)
     check_ticket_hoarding()
