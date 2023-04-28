@@ -36,7 +36,7 @@ DROP TABLE IF EXISTS ingredients;
 CREATE TABLE ingredients (
   ingredient_name             TEXT NOT NULL,
   unit                        TEXT NOT NULL,
-  stored_ingredient_amount    INT,
+  stored_ingredient_amount    INT CHECK (stored_ingredient_amount >= 0),
   last_delivery_date          DATETIME,
   last_delivery_amount        INT,
   PRIMARY KEY                 (ingredient_name)
